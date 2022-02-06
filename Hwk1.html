@@ -1,0 +1,343 @@
+
+<!-- saved from url=(0057)https://heather.cs.ucdavis.edu/~matloff/172/Hwk/Hwk1.html -->
+<html><head><meta http-equiv="Content-Type" content="text/html; charset=windows-1252"></head><body><h1>Homework 1</h1>
+
+<h2>Due Thursday, January 20, 11:59 pm</h2>
+
+<h2>Extremely Important Submission Rules</h2>
+
+<p>
+As noted, you will be graded on your homework interactively in your group.
+However, the TA will pre-screen your submission, running an R script.
+You must follow the rules exactly, <b>OR RISK NOT GETTING CREDIT.</b>
+Here are the rules:
+</p>
+
+<ul>
+
+<li> Your submission will be in the form of a <b>.tar</b> file, with naming
+convention as in our 
+<a href="http://heather.cs.ucdavis.edu/~matloff/172/172Syllabus.html">
+course syllabus</a>. 
+
+</li> <p></p> 
+
+<li> You will make sure that when the TA's script unpacks that file, 
+your <b>.R</b> files will be there, in the same directory from 
+which the script ran.  No subdirectories.
+</li> <p></p>
+
+<li> Your code file names are 
+<b>Problem1.R</b>,
+<b>Problem2.R</b>, and
+<b>Problem3.R</b>.  You must have no other files.
+</li> <p></p> 
+
+<li> The code in those files will be directly runnable; upon being read by
+<b>source()</b>, your code will execute, including plots if any.
+</li> <p></p> 
+
+<li> Remember, your code will run on the TA's machine, or possibly CSIF,
+<b>NOT YOUR MACHINE</b>.  So your code cannot use any special
+environment that you have on your machine.  You may use any packages
+that are in the R installation on CSIF, as well as those listed below,
+but no others.  And avoid the temptation to use a package that does not
+appreciably reduce your development/debugging time; package bloat is the
+root of all evil. :-)
+</li> <p></p>
+
+</ul>
+
+<p>
+Here are details on the TA's script (he could share it with you if he
+wants):
+</p>
+
+<ul>
+
+<li> 
+
+In the same directory from which the script is run, the TA will have the
+MovieLens data, in the <b>Hwk1.RData</b> file.  The contents are
+the data frames <b>ml100</b> and <b>ml100kpluscovs</b> from 
+our book.
+
+</li> <p></p> 
+
+<li> 
+For the graphics problems, the base R plotting facilities are fine.  But
+the TA will make sure the <b>ggplot2</b> and <b>lattice</b> packages are
+loaded too, if you wish to use them.  (I generally like the colors in 
+the latter more.)
+</li> <p></p> 
+
+<li> The script, entirely R code, will be something like this:
+<p></p>
+
+<pre>library(ggplot2 
+library(lattice) 
+library(rectools)
+library(regtools)
+
+load('Hwk1.RData')
+
+for (f in dir(pattern='*.tar')) {  
+   system(paste('tar xf',f))
+   for (i in 1:3) {
+      source(paste0('Problem,i,'.R'))
+      readline('hit Enter when ready')
+   }
+}
+</pre>
+
+</li></ul>
+
+<h2>Generality</h2>
+
+<h2>A Note on the Role of Programming</h2>
+
+<p>
+ECS 172 is <i>not</i> a programming course.  You should find the coding
+in our course to be quite straightforward, not challenging.  The
+programming serves as a tool for data analysis, which is our goal.
+</p>
+
+<h2>Problem 1</h2>
+
+<p>
+Here you will explore how long individual user i waits between making
+ratings, and the same thing for all users collectively.  Let's call
+the means of those quantities
+those quantities W<sub>i</sub> and W, respectively.
+</p>
+
+<p>
+Write a function with call form
+</p>
+
+<pre>waitTimes(rawData)
+</pre>
+
+<p>
+where <b>rawData</b> is a dataframe whose first column is user ID and
+second is timestamp, e.g. the first and fourth columns of 
+<b>ml100</b> in our book.  The return value is an R list,
+with elements <b>individs</b> and <b>overall</b>, the first being a
+vector consisting of the W<sub>i</sub> (in the order of user ID)
+and the second consisting of W.
+</p>
+
+<p>
+Note:  The first wait time is from the first timestamp to the second.
+</p>
+
+<p>
+In order to make sure you know a variety of R constructs, there will be
+two requirements:
+</p>
+
+<ul>
+
+<li> Use this R idiom for finding differences of successive items in a
+vector, making use of shifts:
+<p></p>
+
+<pre>&gt; x &lt;- c(3:5,12,13)
+&gt; x
+[1]  3  4  5 12 13
+&gt; xLeft &lt;- x[2:5]
+&gt; xLeft
+[1]  4  5 12 13
+length
+&gt; xLeft - x[1:4]
+[1] 1 1 7 1
+</pre>
+
+<p>
+This vectorizes the differencing operation, much faster than a loop.
+</p></li> <p></p> 
+
+<li>
+Write (and use) a function with this call form:
+<p></p>
+
+<pre>mergeEm(listOfVecs)
+</pre>
+
+<p>
+Here <b>listOfVecs</b> is an R list, each element of which is a vector
+sorted in ascending order.  The vectors need not be of the same length.
+The return value is the merge of all the individual vectors, again in
+sorted order, so that for instance element 22 is W<sub>22</sub>.
+</p></li> <p></p>
+
+<li> Note that this is to be a general function, usable in R in general.
+None of the code should be specific to this assignment.
+</li> <p></p> 
+
+</ul>
+
+<p>
+Have your code conduct and print a test of <b>mergeEm()</b>
+on a very small dataset.  Have your code run <b>waitTimes()</b>
+on the full <b>ml100kpluscov</b> data, and print out the first 10
+elements of each of W<sub>1</sub> and W; of course, <b>waitTimes()</b>
+must make use of <b>mergeEm()</b>.
+</p>
+
+<h2>Problem 2</h2>
+
+<p>
+Are modern movie titles longer or shorter than in the past?  Is there
+any time trend?  You'll explore that here, and gain some experience with
+string processing.
+</p>
+
+<p>
+The file <b>u.item</b> in the MovieLens <b>.zip</b> file contains
+information about the movies, including title and year of release.
+Write and run code to plot mean title length (in words) against release year.
+</p>
+
+<p>
+You'll need to escape the apostrophes, using the option <b>quote=""</b>
+in your call to <b>read.table()</b>.
+</p>
+
+<p>
+Two strings will be considered words if they are separated by a blank or
+other whitespace, e.g. commas.
+</p>
+
+<p>
+The output is just the plot against time.
+</p>
+
+<h2>Problem 3</h2>
+
+<p>
+Do different movie genres have different rating patterns?  You will
+explore this here.
+</p>
+
+<p>
+
+Recall from your probability course that the <i>density function</i>
+f<sub>X</sub>(t) of a continuous random variable X is a function that can be
+integrated to obtain probabilities.  But the function itself, loosely
+speaking, gives relative frequencies.  If say f<sub>X</sub>(28.8) is
+large, then X often occurs near 28.8, or rarely so if the density is
+small there.
+
+</p>
+
+<p>
+In other words, a density is like a histogram, and in fact a histogram
+is actually a sample estimate of the population density.
+</p>
+
+<p>
+A nicer estimator is called a <i>kernel density estimator</i>.  Its
+salient virtue is that it is a smooth curve, not choppy like a
+histogram.  Since we are interested in multiple variables, for multiple
+genres, the graph will be a lot less cluttered if we use kernel
+estimators.  The analog of the histogram bin width is something called
+the <i>bandwidth</i>, but we'll just take the default value.
+</p>
+
+<p>
+Write a function with call form
+</p>
+
+<pre>plotDensities(inputDF,xName,grpName)
+</pre>
+
+<p>
+Arguments:
+</p>
+
+<ul>
+
+<li> <b>inputDF</b>:  Input data frame.
+</li> <p></p>
+
+<li> <b>xName</b>: name of the column in <b>inputDF</b> that we want to
+draw "histograms" of
+</li> <p></p>
+
+<li> <b>grpName</b>: name of the column in <b>inputDF</b> to be used for
+grouping; the function will group the <b>xName</b> data, and then
+draw a "histogram" for each group; in our case, the groups are the
+genres; the code will assume the grouping column is an R factor, showing
+the first genre of that movie
+</li> <p></p>
+
+</ul>
+
+<p>
+
+The estimated densities will all be plotted on the same graph, in
+different colors, and a legend showing which curve is which will be
+displayed.
+
+</p>
+
+<p>
+The variable X here is mean rating.  It turns out that there are 757
+movies having genre 8.  After randomization due to movies possibly
+having more than one genre, let's say there are 622 movies of genre 8.
+So, you will plot an estimated density based 
+on those 622 mean ratings.  One could draw a histogram of those 622
+numbers, but it's nicer to draw a smooth curve.  And you will do the
+same for each of the genres.  (So you can see why plotting histograms
+would not be good; they would partially obscure each other.)
+</p>
+
+<ul>
+
+<li> If in any row of the data there are
+multiple genres, choose one at random, by calling sample().  
+Set the other 1s in that row to 0s.
+</li> <p></p> 
+
+<li> Use either base R, <b>ggplot2</b> or <b>lattice</b>.  Tons of
+tutorials on the Web.  If you don't use base R, remember to call
+<b>library()</b> or <b>require()</b> at the start of your function.
+</li> <p></p>
+
+<li> Use either base R's <b>density()</b> function or equivalent.  These
+draw smooth curves instead of histograms.
+</li> <p></p>
+
+<li> To use base R, call <b>plot()</b> on the first curve, then
+<b>lines()</b> for each of the rest.  You'll first need to find the max
+Y coordinate among all the curves, and set <b>ylim</b> accordingly in
+your call to <b>plot()</b>.  You can use 1,2,3,... for the default
+colors, or your own choice, but the function must be GENERAL.
+</li> <p></p>
+
+<li> Note that this is to be a general function, usable in R in general.
+None of the code should be specific to this assignment.
+</li> <p></p> 
+
+</ul>
+
+<p></p>
+
+
+<p></p>
+The genres are given in the data as <i>indicator variables,</i> 0s and
+1s (called a <i>dummy variable</i> in stat and
+econ, and <i>one-hot</i> in machine learning).  You'll need to
+convert them.
+<p></p>
+
+<p>
+With 19 genres, you may find the colors hard to distinguish.  If so,
+just do 8 genres.  Also, the fact that some movies are of
+multiple genres; the curve for genre i should be based on all movies
+having that genre, even though two different curves may be derived from
+somewhat overlapping sets of movies.
+</p>
+
+</body></html>
